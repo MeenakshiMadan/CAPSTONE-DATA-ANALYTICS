@@ -1,0 +1,71 @@
+import pandas as pd
+import datetime as dt
+import numpy as np
+import matplotlib.pyplot as ml
+from os import path
+from pandas import ExcelFile
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from datetime import datetime
+
+df = pd.read_excel('NVIDIA.xlsx', sheet_name='Sheet1')
+print("Column headings:")
+print(df.columns)
+df.head()
+
+df['pubdate'] =  pd.to_datetime(df['pubdate'], format='%b %d, %Y')
+df['year'] = df['pubdate'].dt.year
+df.tail()
+
+years=df.groupby("year")
+years.describe().tail()
+
+ml.figure(figsize=(15,10))
+years.size().sort_values(ascending=False).plot.bar()
+ml.xticks(rotation=50)
+ml.xlabel("Year")
+ml.ylabel("Number of Articles")
+ml.show()
+
+df_2009=df.query('year<2010')
+print(df_2009)
+df_2010=df.query('year<2011')
+print(df_2010)
+df_2011=df.query('year<2012')
+print(df_2011)
+df_2012=df.query('year<2013')
+print(df_2012)
+df_2013=df.query('year<2014')
+print(df_2013)
+df_2014=df.query('year<2015')
+print(df_2014)
+df_2015=df.query('year<2016')
+print(df_2015)
+df_2016=df.query('year<2017')
+print(df_2016)
+df_2017=df.query('year<2018')
+print(df_2017)
+df_2018=df.query('year<2019')
+print(df_2018)
+df_2019=df.query('year<2020')
+print(df_2019)
+
+
+text=" ".join(keyword for keyword in df_2009.Title)
+print(text)
+
+
+#creating the stopword list
+stopwords=set(STOPWORDS)
+stopwords.update(["Patent","US","the","Issued","April","July","Sept","Oct","Jan","Feb","Dec","Nov","March","NVIDIA",
+                 "AND","the","Aug","May","California","Inventors","Inventor","June","Assigned","Method","New"])
+                 
+                 
+wordcloud = WordCloud(stopwords=stopwords, background_color="white",max_words=500,max_font_size=1700,
+                      collocations=False).generate(text)
+#display the generated wordcloud
+ml.imshow(wordcloud, interpolation='bilinear')
+ml.axis("off")
+ml.show()
+
+wordcloud.to_file("NVIDIA_2009.png")
